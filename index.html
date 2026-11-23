@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Year 4 Mathematics Challenge</title>
+  <style>
+    :root {
+      --cream: #fff8ed;
+      --orange: #e87926;
+      --orange-dark: #bd5310;
+      --ink: #302b27;
+      --muted: #706860;
+      --green: #277348;
+      --red: #b63d32;
+      --line: #eadfd1;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px 14px 48px;
+      color: var(--ink);
+      background: var(--cream);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    .wrap { max-width: 900px; margin: 0 auto; }
+
+    header {
+      padding: 28px 24px;
+      margin-bottom: 18px;
+      border-radius: 18px;
+      background: #fff;
+      border-top: 7px solid var(--orange);
+      box-shadow: 0 5px 20px #5a34100d;
+      text-align: center;
+    }
+
+    h1 { margin: 0 0 8px; font-size: clamp(1.6rem, 4vw, 2.4rem); }
+    header p { margin: 0; color: var(--muted); }
+
+    .student-info {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 16px 0 20px;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .student-info label { flex: 1 1 220px; font-weight: 700; }
+    .student-info input {
+      display: block;
+      width: 100%;
+      margin-top: 6px;
+      padding: 10px 12px;
+      border: 1px solid #cfc4b7;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    .question {
+      margin: 12px 0;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 3px 12px #5a341008;
+    }
+
+    .question h2 { margin: 0 0 12px; font-size: 1.05rem; }
+    .number { color: var(--orange-dark); font-weight: 800; margin-right: 5px; }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .option {
+      flex: 1 1 150px;
+      min-height: 44px;
+      padding: 9px 12px;
+      color: var(--ink);
+      background: #fffaf4;
+      border: 1px solid #ded2c4;
+      border-radius: 9px;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background .15s, border-color .15s, transform .15s;
+    }
+
+    .option:hover { border-color: var(--orange); transform: translateY(-1px); }
+    .option.selected { background: #fff0df; border: 2px solid var(--orange); }
+    .option.correct { background: #e7f5ec; border-color: var(--green); }
+    .option.incorrect { background: #fbe9e7; border-color: var(--red); }
+    .option:disabled { cursor: default; transform: none; }
+
+    .blank {
+      display: inline-block;
+      width: 145px;
+      max-width: 45vw;
+      padding: 4px 8px;
+      border: 1px solid #cfc4b7;
+      border-radius: 6px;
+      font: inherit;
+      vertical-align: middle;
+    }
+
+    .blank.correct { border: 2px solid var(--green); background: #e7f5ec; }
+    .blank.incorrect { border: 2px solid var(--red); background: #fbe9e7; }
+
+    .feedback { display: none; margin-top: 12px; padding: 10px 12px; border-radius: 9px; }
+    .feedback.show { display: block; }
+    .feedback.good { color: #155b35; background: #e7f5ec; }
+    .feedback.bad { color: #842b24; background: #fbe9e7; }
+    .feedback strong { display: block; margin-bottom: 3px; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 24px 0 14px;
+    }
+
+    .main-button {
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 10px;
+      color: #fff;
+      background: var(--orange);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .main-button:hover { background: var(--orange-dark); }
+    .main-button.secondary { color: var(--ink); background: #fff; border: 1px solid var(--line); }
+
+    #score {
+      display: none;
+      padding: 18px;
+      margin: 14px 0;
+      border: 2px solid var(--orange);
+      border-radius: 14px;
+      background: #fff;
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .note { color: var(--muted); text-align: center; font-size: .92rem; }
+
+    @media (max-width: 520px) {
+      body { padding: 12px 10px 32px; }
+      header { padding: 22px 16px; }
+      .question { padding: 15px; }
+      .option { flex-basis: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>Year 4 Mathematics Challenge</h1>
+      <p>40 questions • Take your time and check your working.</p>
+    </header>
+
+    <section class="student-info" aria-label="Student details">
+      <label for="studentName">Name
+        <input id="studentName" type="text" autocomplete="name" placeholder="Your name">
+      </label>
+      <label for="studentClass">Class
+        <input id="studentClass" type="text" placeholder="Your class">
+      </label>
+    </section>
+
+    <section id="quiz" aria-label="Mathematics questions"></section>
+
+    <div class="controls">
+      <button class="main-button" id="checkButton" type="button">Check Answers</button>
+      <button class="main-button secondary" id="resetButton" type="button">Reset Worksheet</button>
+    </div>
+
+    <div id="score" role="status" aria-live="polite"></div>
+    <p class="note">Your score is marked out of 10. Each question is worth 0.25 marks.</p>
+  </main>
+
+  <script>
+    const questions = [
+      { p: "What number comes immediately after 100,000?", o: ["100,001", "100,010", "100,100", "101,000"], a: 0, e: "Counting forwards by 1 from 100,000 gives 100,001." },
+      { p: "What number comes immediately before 700,000?", o: ["699,000", "699,999", "700,001", "690,000"], a: 1, e: "One less than 700,000 is 699,999." },
+      { p: "Complete the sequence: 250,000, 300,000, 350,000, ___.", o: ["375,000", "400,000", "450,000", "500,000"], a: 1, e: "The sequence increases by 50,000 each time. 350,000 + 50,000 = 400,000." },
+      { p: "Count backwards by 100,000: 1,000,000, 900,000, 800,000, ___.", o: ["790,000", "750,000", "700,000", "600,000"], a: 2, e: "Subtract 100,000 from 800,000 to get 700,000." },
+      { p: "In 583,214, what is the value of the digit 8?", o: ["8", "800", "8,000", "80,000"], a: 3, e: "The 8 is in the ten-thousands place, so its value is 80,000." },
+      { p: "Which is 4,306 written in words?", o: ["Four thousand and thirty-six", "Four thousand, three hundred and six", "Forty-three thousand and six", "Four hundred and thirty-six"], a: 1, e: "4,306 has 4 thousands, 3 hundreds and 6 ones." },
+      { p: "Which is 52,019 written in words?", o: ["Fifty-two thousand and nineteen", "Five thousand, two hundred and nineteen", "Fifty-two thousand, one hundred and nine", "Fifty thousand, two hundred and nineteen"], a: 0, e: "52,019 is fifty-two thousand and nineteen." },
+      { p: "Which is 406,230 written in words?", o: ["Four hundred and six thousand, two hundred and thirty", "Forty-six thousand, two hundred and thirty", "Four hundred and sixty thousand, two hundred and three", "Four hundred and six thousand and twenty-three"], a: 0, e: "406,230 is four hundred and six thousand, two hundred and thirty." },
+      { p: "Which figure represents ‘four hundred and six thousand and thirty-two’?", o: ["460,032", "406,320", "406,032", "400,632"], a: 2, e: "406 thousand is 406,000; adding 32 gives 406,032." },
+      { p: "What is 14 in Roman numerals?", o: ["XIV", "XVI", "IXV", "XXIV"], a: 0, e: "X is 10 and IV is 4, so XIV is 14." },
+      { p: "What number does XXIX represent?", o: ["24", "29", "31", "39"], a: 1, e: "XX is 20 and IX is 9. Together they make 29." },
+      { p: "Calculate 3,456 + 2,187.", o: ["5,533", "5,643", "5,653", "6,643"], a: 1, e: "3,456 + 2,000 = 5,456; then +187 = 5,643." },
+      { p: "Calculate 27,485 + 16,327.", o: ["43,712", "43,802", "43,812", "44,812"], a: 2, e: "27,485 + 16,327 = 43,812." },
+      { p: "Calculate 325,640 + 214,275.", o: ["539,915", "539,815", "540,915", "549,915"], a: 0, e: "Add by place value: 325,640 + 214,275 = 539,915." },
+      { p: "Calculate 8,002 − 3,476.", o: ["4,426", "4,526", "5,526", "4,536"], a: 1, e: "8,002 − 3,000 = 5,002; 5,002 − 476 = 4,526." },
+      { p: "Calculate 60,320 − 18,567.", o: ["41,753", "42,753", "41,853", "51,753"], a: 0, e: "60,320 − 18,000 = 42,320; 42,320 − 567 = 41,753." },
+      { p: "Calculate 700,000 − 268,459.", o: ["431,541", "431,641", "441,541", "531,541"], a: 0, e: "Subtracting 268,459 from 700,000 gives 431,541." },
+      { p: "Calculate 24 × 13.", o: ["292", "302", "312", "322"], a: 2, e: "24 × 13 = 24 × (10 + 3) = 240 + 72 = 312." },
+      { p: "Calculate 123 × 12.", o: ["1,376", "1,476", "1,486", "1,576"], a: 1, e: "123 × 12 = 123 × (10 + 2) = 1,230 + 246 = 1,476." },
+      { p: "Calculate 36 × 40.", o: ["144", "1,040", "1,440", "14,400"], a: 2, e: "36 × 40 = 36 × 4 × 10 = 144 × 10 = 1,440." },
+      { p: "Calculate 125 × 30.", o: ["375", "3,050", "3,750", "37,500"], a: 2, e: "125 × 30 = 125 × 3 × 10 = 375 × 10 = 3,750." },
+      { p: "Calculate 96 ÷ 8.", o: ["10", "11", "12", "14"], a: 2, e: "8 × 12 = 96, so 96 ÷ 8 = 12." },
+      { p: "Calculate 864 ÷ 12.", o: ["62", "70", "72", "82"], a: 2, e: "12 × 72 = 864, so 864 ÷ 12 = 72." },
+      { p: "Calculate 240 ÷ 30.", o: ["6", "8", "12", "80"], a: 1, e: "240 ÷ 30 = 24 ÷ 3 = 8. Divide both numbers by 10 first." },
+      { p: "Calculate 840 ÷ 40.", o: ["12", "20", "21", "210"], a: 2, e: "840 ÷ 40 = 84 ÷ 4 = 21." },
+      { p: "In the fraction 3/8, which number is the numerator?", o: ["3", "5", "8", "11"], a: 0, e: "The numerator is the top number. In 3/8, it is 3." },
+      { p: "Change the mixed fraction 2 1/4 into an improper fraction.", o: ["7/4", "8/4", "9/4", "10/4"], a: 2, e: "2 × 4 + 1 = 9, so 2 1/4 = 9/4." },
+      { p: "Which of these is an improper fraction?", o: ["3/8", "5/7", "7/7", "4/9"], a: 2, e: "An improper fraction has a numerator greater than or equal to its denominator. 7/7 equals one whole." },
+      { p: "Reduce 12/18 to its lowest terms.", o: ["2/3", "3/4", "6/9", "4/9"], a: 0, e: "Divide the numerator and denominator by 6: 12/18 = 2/3." },
+      { p: "Which fraction is equivalent to 3/4?", o: ["6/10", "9/12", "10/12", "12/20"], a: 1, e: "Multiply the numerator and denominator of 3/4 by 3: 9/12." },
+      { p: "Calculate 2/7 + 3/7.", o: ["5/14", "5/7", "6/7", "1"], a: 1, e: "The denominators are the same, so add the numerators: 2/7 + 3/7 = 5/7." },
+      { p: "Calculate 1/2 + 1/4.", o: ["2/6", "1/4", "3/4", "1"], a: 2, e: "1/2 is equivalent to 2/4. Then 2/4 + 1/4 = 3/4." },
+      { p: "Calculate 5/6 − 1/3.", o: ["1/2", "2/3", "4/3", "1/3"], a: 0, e: "1/3 is equivalent to 2/6. Then 5/6 − 2/6 = 3/6 = 1/2." },
+      { p: "Calculate 3/8 × 4.", o: ["3/32", "3/2", "12/8", "7/8"], a: 1, e: "3/8 × 4 = 12/8, which reduces to 3/2 or 1 1/2." },
+      { p: "Calculate 3/4 ÷ 3.", o: ["1/4", "1/2", "3/12", "9/4"], a: 0, e: "Dividing by 3 is multiplying by 1/3: 3/4 × 1/3 = 3/12 = 1/4." },
+      { p: "Calculate 2/5 × 20.", o: ["4", "8", "10", "40"], a: 1, e: "2/5 × 20 = (2 × 20) ÷ 5 = 40 ÷ 5 = 8." },
+      { p: "Calculate 3/5 ÷ 10.", o: ["3/50", "3/15", "6", "30"], a: 0, e: "Dividing by 10 is multiplying by 1/10: 3/5 ÷ 10 = 3/50." },
+      { p: "Which fraction is equivalent to 2/3?", o: ["4/9", "6/9", "8/15", "10/12"], a: 1, e: "Multiply the numerator and denominator of 2/3 by 3 to get 6/9." },
+      { p: "Calculate 1 1/4 + 2 1/4.", o: ["3 1/2", "3 2/8", "4", "2 1/2"], a: 0, e: "Add the whole numbers and fractions: 1 + 2 = 3 and 1/4 + 1/4 = 1/2. The answer is 3 1/2." },
+      { p: "Calculate 3 1/2 − 1 3/4.", o: ["1 1/4", "1 3/4", "2 1/4", "2 3/4"], a: 1, e: "Rewrite 3 1/2 as 2 6/4. Then 2 6/4 − 1 3/4 = 1 3/4." }
+    ];
+
+    const quiz = document.getElementById("quiz");
+    const scoreBox = document.getElementById("score");
+    let checked = false;
+
+    questions.forEach((q, index) => {
+      const card = document.createElement("article");
+      card.className = "question";
+      card.id = `q${index}`;
+
+      const heading = document.createElement("h2");
+      heading.innerHTML = `<span class="number">${index + 1}.</span> ${q.p}`;
+      card.appendChild(heading);
+
+      const options = document.createElement("div");
+      options.className = "options";
+      options.setAttribute("role", "group");
+      options.setAttribute("aria-label", `Answers for question ${index + 1}`);
+
+      q.o.forEach((choice, choiceIndex) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "option";
+        button.innerHTML = `<strong>${String.fromCharCode(65 + choiceIndex)}.</strong> ${choice}`;
+        button.setAttribute("aria-pressed", "false");
+        button.addEventListener("click", () => {
+          if (checked) return;
+          options.querySelectorAll(".option").forEach(b => {
+            b.classList.remove("selected");
+            b.setAttribute("aria-pressed", "false");
+          });
+          button.classList.add("selected");
+          button.setAttribute("aria-pressed", "true");
+        });
+        options.appendChild(button);
+      });
+
+      card.appendChild(options);
+
+      const feedback = document.createElement("div");
+      feedback.className = "feedback";
+      feedback.id = `feedback${index}`;
+      feedback.setAttribute("aria-live", "polite");
+      card.appendChild(feedback);
+      quiz.appendChild(card);
+    });
+
+    document.getElementById("checkButton").addEventListener("click", () => {
+      checked = true;
+      let correctCount = 0;
+
+      questions.forEach((q, index) => {
+        const card = document.getElementById(`q${index}`);
+        const buttons = [...card.querySelectorAll(".option")];
+        const selectedIndex = buttons.findIndex(button => button.classList.contains("selected"));
+        const isCorrect = selectedIndex === q.a;
+
+        if (isCorrect) correctCount++;
+
+        buttons.forEach((button, choiceIndex) => {
+          button.disabled = true;
+          if (choiceIndex === q.a) button.classList.add("correct");
+          if (choiceIndex === selectedIndex && !isCorrect) button.classList.add("incorrect");
+        });
+
+        const feedback = document.getElementById(`feedback${index}`);
+        feedback.className = `feedback show ${isCorrect ? "good" : "bad"}`;
+        feedback.innerHTML =
+          `<strong>${isCorrect ? "Correct!" : "Not quite."} Correct answer: ${String.fromCharCode(65 + q.a)}. ${q.o[q.a]}</strong>${q.e}`;
+      });
+
+      const mark = (correctCount / 40) * 10;
+      scoreBox.style.display = "block";
+      scoreBox.textContent = `You scored ${mark.toFixed(2)} out of 10 (${correctCount} out of 40 correct).`;
+      scoreBox.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    document.getElementById("resetButton").addEventListener("click", () => {
+      checked = false;
+      document.getElementById("studentName").value = "";
+      document.getElementById("studentClass").value = "";
+      scoreBox.style.display = "none";
+
+      document.querySelectorAll(".option").forEach(button => {
+        button.disabled = false;
+        button.classList.remove("selected", "correct", "incorrect");
+        button.setAttribute("aria-pressed", "false");
+      });
+
+      document.querySelectorAll(".feedback").forEach(feedback => {
+        feedback.className = "feedback";
+        feedback.textContent = "";
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+</body>
+</html>
